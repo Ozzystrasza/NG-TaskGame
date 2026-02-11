@@ -13,7 +13,7 @@ public class ThirdPersonCamera : MonoBehaviour
     public float pitchMin = -30f;
     public float pitchMax = 60f;
 
-    [Header("Input (optional)")]
+    [Header("Input")]
     public InputActionReference lookAction;
 
     Vector3 currentVelocity;

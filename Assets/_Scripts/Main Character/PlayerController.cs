@@ -59,9 +59,6 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         ApplyGravity();
         UpdateAnimator();
-
-        if (collectAction != null && collectAction.action.triggered)
-            TriggerCollect();
     }
 
     void ReadInput()
