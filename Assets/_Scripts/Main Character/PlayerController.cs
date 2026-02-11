@@ -12,9 +12,6 @@ public class PlayerController : MonoBehaviour
     public float gravity = -9.81f;
     public float jumpHeight = 1.5f;
 
-    [Header("Jumping")]
-    // simple jump (no buffering)
-
     [Header("Input (Input System)")]
     public InputActionReference moveAction;
     public InputActionReference runAction;
@@ -23,7 +20,6 @@ public class PlayerController : MonoBehaviour
 
     [Header("Camera")]
     public Transform cameraTransform;
-
 
     CharacterController controller;
     Animator animator;
@@ -64,7 +60,6 @@ public class PlayerController : MonoBehaviour
         ApplyGravity();
         UpdateAnimator();
 
-        // collect action triggers collect animation
         if (collectAction != null && collectAction.action.triggered)
             TriggerCollect();
     }
@@ -79,13 +74,10 @@ public class PlayerController : MonoBehaviour
             isRunning = runAction.action.ReadValue<float>() > 0.5f;
         else
             isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-
-        // Note: jump handled in HandleMovement (uses Input System if present, otherwise legacy Input.GetButtonDown)
     }
 
     void HandleMovement()
     {
-        // read input (Input System or fallback)
         Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
         if (moveAction == null)
         {
@@ -94,11 +86,9 @@ public class PlayerController : MonoBehaviour
             input = new Vector3(h, 0f, v);
         }
 
-        // normalize diagonal movement and make movement camera-relative
         Vector3 move = Vector3.zero;
         if (input.sqrMagnitude > 0.01f)
         {
-            // camera-relative directions
             Vector3 camForward = Vector3.forward;
             Vector3 camRight = Vector3.right;
             if (cameraTransform != null)
@@ -111,28 +101,23 @@ public class PlayerController : MonoBehaviour
                 camRight.Normalize();
             }
 
-            move = (camForward * input.z + camRight * input.x);
+            move = camForward * input.z + camRight * input.x;
             move = move.normalized;
 
-            // rotate character to movement direction (camera-relative)
             Quaternion targetRot = Quaternion.LookRotation(move);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * Time.deltaTime);
         }
 
-        // running (already set in ReadInput when using Input System)
         float speed = isRunning ? runSpeed : walkSpeed;
 
-        // move in movement direction
         if (move.sqrMagnitude > 0.0001f)
         {
             Vector3 horizontalVelocity = move * speed;
             controller.Move(horizontalVelocity * Time.deltaTime);
         }
 
-        // grounding (simple)
         isGrounded = controller.isGrounded;
 
-        // jumping (simple)
         bool jumpTriggered = false;
         if (jumpAction != null)
             jumpTriggered = jumpAction.action.triggered;
@@ -154,20 +139,16 @@ public class PlayerController : MonoBehaviour
         }
         else if (velocity.y < 0f)
         {
-            // keep a small downward velocity to stick to ground
             velocity.y = -2f;
         }
 
         controller.Move(velocity * Time.deltaTime);
     }
 
-
-
     void UpdateAnimator()
     {
         if (animator == null) return;
 
-        // Speed: prefer input-driven target speed (more stable for blend trees), fallback to controller velocity
         Vector3 horizontalVel = new Vector3(controller.velocity.x, 0f, controller.velocity.z);
         float velocitySpeed = horizontalVel.magnitude;
         float targetSpeed = 0f;
@@ -181,14 +162,10 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("Speed", animSpeed);
         animator.SetBool("IsRunning", isRunning);
 
-        // grounding + jumping state
         animator.SetBool("IsGrounded", isGrounded);
         animator.SetBool("IsJumping", !isGrounded && velocity.y > 0.1f);
     }
 
-
-
-    // Public hook to trigger the collect animation; actual item collection logic can be implemented later
     public void TriggerCollect()
     {
         if (animator != null)
@@ -197,17 +174,4 @@ public class PlayerController : MonoBehaviour
         }
         // TODO: implement item pickup handling
     }
-
-    // Optional helper: automatically call TriggerCollect when entering trigger with "Collectible" tag
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Collectible"))
-        {
-            // play collect animation (actual collection handled elsewhere)
-            TriggerCollect();
-            // you may choose to destroy or disable the collectible here later
-        }
-    }
-
-
 }
