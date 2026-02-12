@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 206787f9753f9f84982c5fe0ce52acd7, type: 3}
-  m_Name: Potion
+  m_Name: PotionMana
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  id: potion
-  itemName: Health Potion
+  id: mpotion
+  itemName: Mana Potion
   itemType: 1
-  icon: {fileID: 21300000, guid: 117b17facff65dc42b1b57deb7c21551, type: 3}
-  description: A potion that restores health
+  icon: {fileID: 21300000, guid: b7f77607c82ea4142a2070c0e37e1756, type: 3}
+  description: A potion that restores mana

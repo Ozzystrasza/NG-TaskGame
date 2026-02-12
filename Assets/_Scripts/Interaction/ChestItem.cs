@@ -25,11 +25,13 @@ public class ChestItem : InteractiveElement
         var col = GetComponent<SphereCollider>();
         if (col != null) col.enabled = false;
         this.enabled = false;
+
+        GetComponent<WobbleAnimation>()?.StopForever();
     }
 
     public override void OnFocus()
     {
-        
+
     }
 
     public override void OnDefocus()

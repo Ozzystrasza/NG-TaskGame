@@ -13,14 +13,16 @@ public class InventoryItemDetailsPanel : MonoBehaviour
 
     private int currentSlotIndex = -1;
     private ItemDefinition currentItem;
+    private InventoryCategory currentCategory = InventoryCategory.Consumable;
 
     private void OnEnable()
     {
         Clear();
     }
 
-    public void ShowItem(int slotIndex, InventorySlot slot)
+    public void ShowItem(InventoryCategory category, int slotIndex, InventorySlot slot)
     {
+        currentCategory = category;
         currentSlotIndex = slotIndex;
 
         if (slot == null || slot.IsEmpty || slot.item == null)
@@ -140,7 +142,7 @@ public class InventoryItemDetailsPanel : MonoBehaviour
         if (InventoryManager.Instance == null)
             return;
 
-        bool used = InventoryManager.Instance.UseItem(currentSlotIndex);
+        bool used = InventoryManager.Instance.UseItem(currentCategory, currentSlotIndex);
 
         if (!used)
         {
@@ -148,10 +150,10 @@ public class InventoryItemDetailsPanel : MonoBehaviour
         }
 
         // Refresh details after inventory change
-        var slots = InventoryManager.Instance.Slots;
+        var slots = InventoryManager.Instance.GetSlots(currentCategory);
         if (currentSlotIndex >= 0 && currentSlotIndex < slots.Count)
         {
-            ShowItem(currentSlotIndex, (InventorySlot)slots[currentSlotIndex]);
+            ShowItem(currentCategory, currentSlotIndex, (InventorySlot)slots[currentSlotIndex]);
         }
         else
         {
@@ -164,7 +166,7 @@ public class InventoryItemDetailsPanel : MonoBehaviour
         if (currentSlotIndex < 0 || InventoryManager.Instance == null)
             return;
 
-        InventoryManager.Instance.ClearSlot(currentSlotIndex);
+        InventoryManager.Instance.ClearSlot(currentCategory, currentSlotIndex);
         Clear();
     }
 
@@ -173,10 +175,10 @@ public class InventoryItemDetailsPanel : MonoBehaviour
         if (currentSlotIndex < 0 || InventoryManager.Instance == null)
             return;
 
-        var slots = InventoryManager.Instance.Slots;
+        var slots = InventoryManager.Instance.GetSlots(currentCategory);
         if (currentSlotIndex >= 0 && currentSlotIndex < slots.Count)
         {
-            ShowItem(currentSlotIndex, (InventorySlot)slots[currentSlotIndex]);
+            ShowItem(currentCategory, currentSlotIndex, (InventorySlot)slots[currentSlotIndex]);
         }
         else
         {

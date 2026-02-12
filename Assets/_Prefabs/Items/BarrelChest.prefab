@@ -54,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 58d53420af384224ea4cfee8973d18cb, type: 2}
     - target: {fileID: 919132149155446097, guid: 2f1abd389c3990446bc2a8e693604280, type: 3}
       propertyPath: m_Name
-      value: rpgpp_lt_barrel_02 (4)
+      value: BarrelChest
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -69,6 +69,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2f1abd389c3990446bc2a8e693604280, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2435374248980322804}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2f1abd389c3990446bc2a8e693604280, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -1261111576721585925}
   m_SourcePrefab: {fileID: 100100000, guid: 2f1abd389c3990446bc2a8e693604280, type: 3}
 --- !u!1 &8741699114222388926 stripped
 GameObject:
@@ -131,3 +134,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChestItem
   interactionType: {fileID: 11400000, guid: 0b7aa00095c31ba46a0d8c3226eaa760, type: 2}
   loot: {fileID: 11400000, guid: 8d193db54cad75e46a5160f9a50c2e5f, type: 2}
+--- !u!114 &-1261111576721585925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8741699114222388926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dac3cd8d8ae2d904e8927ebc094b7d9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WobbleAnimation
+  angle: 3
+  duration: 0.12
+  minInterval: 4
+  maxInterval: 7

@@ -20,8 +20,10 @@ public class InventoryUI : MonoBehaviour
     // UI elements for each *visible* (non-empty) slot
     private readonly List<InventorySlotUI> slotUIs = new List<InventorySlotUI>();
 
-    // Selected logical slot index in InventoryManager.Slots
+    // Selected logical slot index within the current category list
     private int selectedSlotIndex = -1;
+
+    private InventoryCategory currentCategory = InventoryCategory.Consumable;
 
     private bool isDragging;
     private int draggingFromIndex = -1;
@@ -72,7 +74,7 @@ public class InventoryUI : MonoBehaviour
             return;
 
         // If selected slot became empty or out of range, clear selection
-        var slots = inventoryManager.Slots;
+        var slots = inventoryManager.GetSlots(currentCategory);
         if (selectedSlotIndex >= 0)
         {
             if (selectedSlotIndex >= slots.Count ||
@@ -109,7 +111,7 @@ public class InventoryUI : MonoBehaviour
 
         slotUIs.Clear();
 
-        var slots = inventoryManager.Slots;
+        var slots = inventoryManager.GetSlots(currentCategory);
         for (int i = 0; i < slots.Count; i++)
         {
             var slot = (InventorySlot)slots[i];
@@ -141,10 +143,10 @@ public class InventoryUI : MonoBehaviour
         if (inventoryManager == null || detailsPanel == null)
             return;
 
-        var slots = inventoryManager.Slots;
+        var slots = inventoryManager.GetSlots(currentCategory);
         if (logicalIndex >= 0 && logicalIndex < slots.Count)
         {
-            detailsPanel.ShowItem(logicalIndex, (InventorySlot)slots[logicalIndex]);
+            detailsPanel.ShowItem(currentCategory, logicalIndex, (InventorySlot)slots[logicalIndex]);
         }
     }
 
@@ -153,7 +155,7 @@ public class InventoryUI : MonoBehaviour
         if (inventoryManager == null)
             return;
 
-        inventoryManager.UseItem(logicalIndex);
+        inventoryManager.UseItem(currentCategory, logicalIndex);
     }
 
     private void UpdateSelectionHighlight()
@@ -172,7 +174,7 @@ public class InventoryUI : MonoBehaviour
         if (inventoryManager == null)
             return;
 
-        var slots = inventoryManager.Slots;
+        var slots = inventoryManager.GetSlots(currentCategory);
         if (logicalIndex < 0 || logicalIndex >= slots.Count)
             return;
 
@@ -225,9 +227,8 @@ public class InventoryUI : MonoBehaviour
             return;
         }
 
-        // Drag & drop is only between visible entries because we only create UI for non-empty slots,
-        // and each slotUI passes its logical index.
-        inventoryManager.MoveSlot(draggingFromIndex, targetLogicalIndex);
+        // Drag & drop is only between visible entries in the current category.
+        inventoryManager.MoveSlot(currentCategory, draggingFromIndex, targetLogicalIndex);
         EndDrag(eventData);
     }
 
@@ -246,5 +247,28 @@ public class InventoryUI : MonoBehaviour
     }
 
     #endregion
+
+    // Tab switching – hook these to UI buttons in the inspector
+    public void ShowConsumablesTab()
+    {
+        currentCategory = InventoryCategory.Consumable;
+        selectedSlotIndex = -1;
+        if (detailsPanel != null)
+        {
+            detailsPanel.Clear();
+        }
+        HandleInventoryChanged();
+    }
+
+    public void ShowEquipmentTab()
+    {
+        currentCategory = InventoryCategory.Equipment;
+        selectedSlotIndex = -1;
+        if (detailsPanel != null)
+        {
+            detailsPanel.Clear();
+        }
+        HandleInventoryChanged();
+    }
 }
 
