@@ -28,6 +28,7 @@ public class InventoryManager : MonoBehaviour
     [Header("Config")]
     [SerializeField] private int consumableCapacity = 24;
     [SerializeField] private int equipmentCapacity = 24;
+    [SerializeField] private ItemDatabase itemDatabase;
 
     [Header("State")]
     [SerializeField] private List<InventorySlot> consumableSlots;
@@ -48,6 +49,16 @@ public class InventoryManager : MonoBehaviour
         Instance = this;
 
         InitializeSlots();
+    }
+
+    private void Start()
+    {
+        TryLoadInventory();
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveInventory();
     }
 
     private void InitializeSlots()
@@ -129,6 +140,7 @@ public class InventoryManager : MonoBehaviour
         if (added > 0)
         {
             NotifyInventoryChanged();
+            SaveInventory();
             return true;
         }
 
@@ -171,6 +183,7 @@ public class InventoryManager : MonoBehaviour
         if (remaining < amount)
         {
             NotifyInventoryChanged();
+            SaveInventory();
             return true;
         }
 
@@ -186,6 +199,7 @@ public class InventoryManager : MonoBehaviour
         {
             slot.Clear();
             NotifyInventoryChanged();
+            SaveInventory();
         }
     }
 
@@ -220,6 +234,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         NotifyInventoryChanged();
+        SaveInventory();
     }
 
     public void MoveSlot(int fromIndex, int toIndex) => MoveSlot(InventoryCategory.Consumable, fromIndex, toIndex);
@@ -289,6 +304,7 @@ public class InventoryManager : MonoBehaviour
         if (used)
         {
             NotifyInventoryChanged();
+            SaveInventory();
         }
 
         return used;
@@ -341,6 +357,111 @@ public class InventoryManager : MonoBehaviour
     private bool IsValidIndex(List<InventorySlot> list, int index)
     {
         return list != null && index >= 0 && index < list.Count;
+    }
+
+    // --- Save / Load ---
+
+    public InventorySaveData BuildSaveData(EquipmentManager equipmentManager)
+    {
+        var data = new InventorySaveData();
+
+        for (int i = 0; i < consumableSlots.Count; i++)
+        {
+            var slot = consumableSlots[i];
+            if (slot != null && !slot.IsEmpty && slot.item != null)
+            {
+                data.consumableSlots.Add(new InventorySlotSaveData { slotIndex = i, itemId = slot.item.id });
+            }
+        }
+
+        for (int i = 0; i < equipmentSlots.Count; i++)
+        {
+            var slot = equipmentSlots[i];
+            if (slot != null && !slot.IsEmpty && slot.item != null)
+            {
+                data.equipmentSlots.Add(new InventorySlotSaveData { slotIndex = i, itemId = slot.item.id });
+            }
+        }
+
+        if (equipmentManager != null)
+        {
+            data.equippedWeaponId = equipmentManager.EquippedWeapon?.id;
+            data.equippedArmorId = equipmentManager.EquippedArmor?.id;
+        }
+
+        return data;
+    }
+
+    public void ApplySaveData(InventorySaveData data, ItemDatabase db, EquipmentManager equipmentManager)
+    {
+        if (data == null) return;
+
+        InitializeSlots();
+
+        if (db != null)
+        {
+            if (data.consumableSlots != null)
+            {
+                foreach (var entry in data.consumableSlots)
+                {
+                    if (entry.slotIndex >= 0 && entry.slotIndex < consumableSlots.Count && !string.IsNullOrEmpty(entry.itemId))
+                    {
+                        var item = db.GetItemById(entry.itemId);
+                        if (item != null)
+                            consumableSlots[entry.slotIndex].item = item;
+                    }
+                }
+            }
+
+            if (data.equipmentSlots != null)
+            {
+                foreach (var entry in data.equipmentSlots)
+                {
+                    if (entry.slotIndex >= 0 && entry.slotIndex < equipmentSlots.Count && !string.IsNullOrEmpty(entry.itemId))
+                    {
+                        var item = db.GetItemById(entry.itemId);
+                        if (item != null)
+                            equipmentSlots[entry.slotIndex].item = item;
+                    }
+                }
+            }
+
+            if (equipmentManager != null)
+            {
+                if (!string.IsNullOrEmpty(data.equippedWeaponId))
+                {
+                    var weapon = db.GetItemById(data.equippedWeaponId);
+                    equipmentManager.SetEquippedWeapon(weapon);
+                }
+                if (!string.IsNullOrEmpty(data.equippedArmorId))
+                {
+                    var armor = db.GetItemById(data.equippedArmorId);
+                    equipmentManager.SetEquippedArmor(armor);
+                }
+            }
+        }
+
+        NotifyInventoryChanged();
+    }
+
+    public void SaveInventory()
+    {
+        var equipmentManager = EquipmentManager.Instance;
+        InventorySaveData data = BuildSaveData(equipmentManager);
+        InventorySaveSystem.SaveToFile(data);
+    }
+
+    public void TryLoadInventory()
+    {
+        InventorySaveData data = InventorySaveSystem.LoadFromFile();
+        if (data == null)
+        {
+            NotifyInventoryChanged();
+            return;
+        }
+
+        var equipmentManager = EquipmentManager.Instance;
+        ApplySaveData(data, itemDatabase, equipmentManager);
     }
 }
 

@@ -67,5 +67,21 @@ public class EquipmentManager : MonoBehaviour
         if (item == null) return false;
         return item == equippedWeapon || item == equippedArmor;
     }
+
+    /// <summary>Used by save/load to restore equipped weapon without triggering normal equip flow.</summary>
+    public void SetEquippedWeapon(ItemDefinition weapon)
+    {
+        equippedWeapon = weapon;
+        if (weapon != null)
+            Debug.Log("Restored equipped weapon: " + weapon.itemName);
+    }
+
+    /// <summary>Used by save/load to restore equipped armor without triggering normal equip flow.</summary>
+    public void SetEquippedArmor(ItemDefinition armor)
+    {
+        equippedArmor = armor;
+        if (armor != null)
+            Debug.Log("Restored equipped armor: " + armor.itemName);
+    }
 }
 
