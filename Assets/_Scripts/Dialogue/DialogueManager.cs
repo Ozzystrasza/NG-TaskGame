@@ -308,16 +308,19 @@ public class DialogueManager : MonoBehaviour
         _dialogueOpen = true;
         _onDialogueFinished = OnDialogueFinishedInternal;
 
-        if (dialogueUI != null)
+        if (dialogueUI == null)
         {
-            var bindingDisplay = GetContinueBindingDisplay();
-            if (!string.IsNullOrEmpty(bindingDisplay))
-            {
-                dialogueUI.SetHint($"Press {bindingDisplay} to continue");
-            }
-            dialogueUI.Show(text, _onDialogueFinished);
-            InteractionManager.Instance?.HideInteractionPrompt();
+            Debug.LogWarning("DialogueManager: Dialogue UI reference is not assigned. Assign the DialogueUIController in the Inspector.");
+            return;
         }
+
+        var bindingDisplay = GetContinueBindingDisplay();
+        if (!string.IsNullOrEmpty(bindingDisplay))
+        {
+            dialogueUI.SetHint($"Press {bindingDisplay} to continue");
+        }
+        dialogueUI.Show(text, _onDialogueFinished);
+        InteractionManager.Instance?.HideInteractionPrompt();
     }
 
     /// <summary>
@@ -335,12 +338,13 @@ public class DialogueManager : MonoBehaviour
         _dialogueOpen = false;
 
         dialogueUI.Hide();
-        InteractionManager.Instance?.ShowInteractionPromptIfFocused();
     }
 
     private void OnDialogueFinishedInternal()
     {
         _dialogueOpen = false;
+
+        bool gaveReward = false;
 
         // Grant any pending reward now that the dialogue is closed.
         if (_pendingRewardItem != null && !string.IsNullOrEmpty(_pendingRewardDialogueId) && _pendingRewardLineIndex >= 0)
@@ -349,6 +353,7 @@ public class DialogueManager : MonoBehaviour
             {
                 GiveReward(_pendingRewardItem);
                 MarkRewardConsumed(_pendingRewardDialogueId, _pendingRewardLineIndex);
+                gaveReward = true;
             }
         }
 
@@ -356,7 +361,8 @@ public class DialogueManager : MonoBehaviour
         _pendingRewardDialogueId = null;
         _pendingRewardLineIndex = -1;
 
-        InteractionManager.Instance?.ShowInteractionPromptIfFocused();
+        if (!gaveReward)
+            InteractionManager.Instance?.ShowInteractionPromptIfFocused();
     }
 
     private string GetContinueBindingDisplay()

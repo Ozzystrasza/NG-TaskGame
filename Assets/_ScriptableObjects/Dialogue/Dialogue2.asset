@@ -12,5 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920d92eba094ec749a3a2902be891065, type: 3}
   m_Name: Dialogue2
   m_EditorClassIdentifier: Assembly-CSharp::DialogueDefinition
-  id: npc_dialogue
-  lines: []
+  id: npc_dialogue2
+  lines:
+  - text: "Hold still\u2014armor like that tells stories, and most of them end badly
+      if not mended. Steel\u2019s honest work. It bends, it breaks, and you fix it.
+      People\u2026 not so simple. If you\u2019re heading beyond the ridge, let me
+      reinforce your gear. No charge if you bring back good news\u2026 or at least
+      come back breathing."
+    isOneTimeReward: 0
+    rewardItem: {fileID: 0}
+  - text: "Welcome in. Sit, warm yourself. The stew\u2019s fresh, and the ale\u2019s
+      only slightly watered\u2014on my honor. Travelers bring coin, but they also
+      bring tales, and I value those just as much. Stay a while and share what you\u2019ve
+      seen on the road. Around here, stories travel faster than horses\u2026 and
+      sometimes they arrive first."
+    isOneTimeReward: 0
+    rewardItem: {fileID: 0}
+  - text: "Oh! Sorry\u2014didn\u2019t see you there. I\u2019m meant to deliver this
+      letter to the reeve before sunset, but the path by the old shrine gives me
+      the shivers. They say the bells ring on their own when no one\u2019s near.
+      You look brave, though. If you\u2019re going that way\u2026 maybe we could
+      walk together? Just until the bridge, at least."
+    isOneTimeReward: 0
+    rewardItem: {fileID: 0}

@@ -3,7 +3,8 @@ using UnityEngine;
 public class NPCDialogue : InteractiveElement
 {
     [Header("Dialogue")]
-    public string dialogueId = "npc_dialogue";
+    [Tooltip("Assign the DialogueDefinition asset for this NPC. Its id is used to start dialogue.")]
+    public DialogueDefinition dialogueDefinition;
 
     public override void OnInteract()
     {
@@ -13,6 +14,12 @@ public class NPCDialogue : InteractiveElement
             return;
         }
 
-        DialogueManager.Instance.StartDialogue(dialogueId);
+        if (dialogueDefinition == null)
+        {
+            Debug.LogWarning("NPCDialogue: No DialogueDefinition assigned. Assign the asset in the Inspector.");
+            return;
+        }
+
+        DialogueManager.Instance.StartDialogue(dialogueDefinition.id);
     }
 }

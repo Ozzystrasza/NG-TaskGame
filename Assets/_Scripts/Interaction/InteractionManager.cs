@@ -55,6 +55,12 @@ public class InteractionManager : MonoBehaviour
             return;
         }
 
+        if (UIInputBlocker.IsBlocked)
+        {
+            ReceivedInteractWhileBlocked = true;
+            return;
+        }
+
         if (currentFocused != null)
         {
             Debug.Log($"[InteractionManager] Interacting with {currentFocused}");
@@ -200,5 +206,6 @@ public class InteractionManager : MonoBehaviour
 
         HideInteractionPrompt();
         collectedUIInstance.Show(item);
+        collectedUIInstance.transform.SetAsLastSibling();
     }
 }

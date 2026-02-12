@@ -49,6 +49,7 @@ public class DialogueUIController : MonoBehaviour
         {
             gameObject.SetActive(true);
         }
+        transform.SetAsLastSibling();
     }
 
     /// <summary>
