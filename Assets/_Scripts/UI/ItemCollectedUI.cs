@@ -14,6 +14,16 @@ public class ItemCollectedUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    void OnEnable()
+    {
+        UIInputBlocker.Push();
+    }
+
+    void OnDisable()
+    {
+        UIInputBlocker.Pop();
+    }
+
     public void Show(ItemDefinition def)
     {
         if (def == null) return;

@@ -55,10 +55,23 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        ReadInput();
-        HandleMovement();
-        ApplyGravity();
-        UpdateAnimator();
+        if (UIInputBlocker.IsBlocked)
+        {
+            // When UI is blocking, ignore player input but still apply gravity
+            // and keep animator in sync so the character doesn't jitter.
+            moveInput = Vector2.zero;
+            isRunning = false;
+
+            ApplyGravity();
+            UpdateAnimator();
+        }
+        else
+        {
+            ReadInput();
+            HandleMovement();
+            ApplyGravity();
+            UpdateAnimator();
+        }
     }
 
     void ReadInput()

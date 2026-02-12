@@ -32,6 +32,8 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void LateUpdate()
     {
+        bool blockInput = UIInputBlocker.IsBlocked;
+
         if (target == null)
         {
             var cc = FindAnyObjectByType<CharacterController>();
@@ -40,12 +42,15 @@ public class ThirdPersonCamera : MonoBehaviour
         }
 
         Vector2 look = Vector2.zero;
-        if (lookAction != null && lookAction.action != null && lookAction.action.enabled)
-            look = lookAction.action.ReadValue<Vector2>();
-        else
+        if (!blockInput)
         {
-            if (Mouse.current != null) look = Mouse.current.delta.ReadValue();
-            else if (Gamepad.current != null) look = Gamepad.current.rightStick.ReadValue();
+            if (lookAction != null && lookAction.action != null && lookAction.action.enabled)
+                look = lookAction.action.ReadValue<Vector2>();
+            else
+            {
+                if (Mouse.current != null) look = Mouse.current.delta.ReadValue();
+                else if (Gamepad.current != null) look = Gamepad.current.rightStick.ReadValue();
+            }
         }
 
         float dt = Application.isPlaying ? Time.deltaTime : (1f / 60f);

@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 206787f9753f9f84982c5fe0ce52acd7, type: 3}
-  m_Name: Potion
+  m_Name: ArmorWood
   m_EditorClassIdentifier: Assembly-CSharp::ItemDefinition
-  id: potion
-  itemName: Health Potion
-  itemType: 1
-  icon: {fileID: 21300000, guid: 117b17facff65dc42b1b57deb7c21551, type: 3}
-  description: A potion that restores health
+  id: warmor
+  itemName: Wooden Armor
+  itemType: 3
+  icon: {fileID: 21300000, guid: 541ae020fad5efc48a89a38c6218a601, type: 3}
+  description: An armor made of wood
