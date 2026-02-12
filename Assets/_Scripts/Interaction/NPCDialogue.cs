@@ -7,7 +7,12 @@ public class NPCDialogue : InteractiveElement
 
     public override void OnInteract()
     {
-        Debug.Log($"NPCDialogue: start dialogue '{dialogueId}'");
-        // TODO: Open dialogue UI / dialogue system invocation
+        if (DialogueManager.Instance == null)
+        {
+            Debug.LogWarning("NPCDialogue: No DialogueManager in scene, cannot start dialogue.");
+            return;
+        }
+
+        DialogueManager.Instance.StartDialogue(dialogueId);
     }
 }

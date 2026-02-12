@@ -5,6 +5,11 @@ public class InteractionManager : MonoBehaviour
 {
     public static InteractionManager Instance { get; private set; }
 
+    /// <summary>
+    /// True when we received an interact this event but returned early because UI was blocked (so DialogueManager should not set IgnoreNextInteract).
+    /// </summary>
+    public static bool ReceivedInteractWhileBlocked { get; private set; }
+
     [Header("Input")]
     public InputActionReference interactAction;
 
@@ -44,8 +49,15 @@ public class InteractionManager : MonoBehaviour
 
     private void OnInteractPerformed(InputAction.CallbackContext ctx)
     {
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueOpen)
+        {
+            DialogueManager.Instance.RequestCloseDialogue();
+            return;
+        }
+
         if (currentFocused != null)
         {
+            Debug.Log($"[InteractionManager] Interacting with {currentFocused}");
             currentFocused.OnInteract();
 
             var mb = currentFocused as MonoBehaviour;
@@ -56,7 +68,21 @@ public class InteractionManager : MonoBehaviour
                     playerController?.TriggerCollect();
                 }
             }
+            return;
+        }
 
+        ReceivedInteractWhileBlocked = false;
+
+        Debug.Log($"[InteractionManager] Interact pressed. UIBlocked={UIInputBlocker.IsBlocked}, hasFocus={currentFocused != null}");
+
+        if (DialogueManager.Instance != null && DialogueManager.ConsumeIgnoreNextInteract())
+            return;
+
+        if (UIInputBlocker.IsBlocked)
+        {
+            ReceivedInteractWhileBlocked = true;
+            Debug.Log("[InteractionManager] Interact ignored because UI is blocked.");
+            return;
         }
     }
 
@@ -147,6 +173,24 @@ public class InteractionManager : MonoBehaviour
             uiInstance.Hide();
     }
 
+    /// <summary>
+    /// Hides the "Press E to interact" prompt. Used when dialogue opens.
+    /// </summary>
+    public void HideInteractionPrompt()
+    {
+        if (uiInstance != null)
+            uiInstance.Hide();
+    }
+
+    /// <summary>
+    /// Shows the interaction prompt if the player has an interactable focused. Used when dialogue closes.
+    /// </summary>
+    public void ShowInteractionPromptIfFocused()
+    {
+        if (currentFocused != null)
+            ShowUIFor(currentFocused);
+    }
+
     public void ShowCollected(ItemDefinition item)
     {
         if (collectedUIPrefab == null || item == null) return;
@@ -154,6 +198,7 @@ public class InteractionManager : MonoBehaviour
         if (collectedUIInstance == null)
             collectedUIInstance = Instantiate(collectedUIPrefab);
 
+        HideInteractionPrompt();
         collectedUIInstance.Show(item);
     }
 }

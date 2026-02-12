@@ -22,6 +22,7 @@ public class ItemCollectedUI : MonoBehaviour
     void OnDisable()
     {
         UIInputBlocker.Pop();
+        InteractionManager.Instance?.ShowInteractionPromptIfFocused();
     }
 
     public void Show(ItemDefinition def)

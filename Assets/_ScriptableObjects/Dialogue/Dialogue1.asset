@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 920d92eba094ec749a3a2902be891065, type: 3}
+  m_Name: Dialogue1
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueDefinition
+  id: npc_dialogue1
+  lines:
+  - text: Thanks for listening to me, here take this as a gift.
+    isOneTimeReward: 1
+    rewardItem: {fileID: 11400000, guid: c07e6aea10a99754b88868019b67b754, type: 2}
+  - text: "Ah, a traveler! Not many pass through these days. If you\u2019re staying
+      the night, keep to the lanterns after sunset\u2014the woods don\u2019t like
+      strangers wandering in the dark. Still, you look capable. If you need bread,
+      gossip, or a place by the fire, you\u2019ll find it here\u2026 for a fair word
+      and a fair coin."
+    isOneTimeReward: 0
+    rewardItem: {fileID: 0}
+  - text: "Storm\u2019s coming, I can feel it in my bones. Crops are thin, and the
+      river\u2019s been acting strange\u2014too quiet, like it\u2019s holding its
+      breath. Folk say the old mill\u2019s cursed again. I don\u2019t know about
+      curses\u2026 but I do know something\u2019s wrong. If you\u2019re headed that
+      way, keep your eyes open. And\u2026 if you find anything, come tell me first,
+      will you?"
+    isOneTimeReward: 0
+    rewardItem: {fileID: 0}
+  - text: "You\u2019re not from around here. I\u2019d remember a face like yours.
+      We keep our gates closed for a reason\u2014bandits on the road, and worse in
+      the hills. If you\u2019ve business in this village, best speak it plain. If
+      not\u2026 well, the road out is still open, and I\u2019d suggest you take it
+      before night falls."
+    isOneTimeReward: 0
+    rewardItem: {fileID: 0}
