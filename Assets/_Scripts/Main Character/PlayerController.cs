@@ -57,8 +57,6 @@ public class PlayerController : MonoBehaviour
     {
         if (UIInputBlocker.IsBlocked)
         {
-            // When UI is blocking, ignore player input but still apply gravity
-            // and keep animator in sync so the character doesn't jitter.
             moveInput = Vector2.zero;
             isRunning = false;
 
@@ -182,6 +180,5 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetTrigger("Collect");
         }
-        // TODO: implement item pickup handling
     }
 }

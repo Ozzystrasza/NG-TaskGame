@@ -12,7 +12,6 @@ public enum ItemType
 public class ItemDefinition : ScriptableObject
 {
     [Header("Identity")]
-    [Tooltip("Unique, stable ID used for save/load. Must not change between sessions.")]
     public string id;
     public string itemName;
 

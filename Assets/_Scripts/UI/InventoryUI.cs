@@ -17,10 +17,8 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private Canvas rootCanvas;
     [SerializeField] private Image dragIcon;
 
-    // UI elements for each *visible* (non-empty) slot
     private readonly List<InventorySlotUI> slotUIs = new List<InventorySlotUI>();
 
-    // Selected logical slot index within the current category list
     private int selectedSlotIndex = -1;
 
     private InventoryCategory currentCategory = InventoryCategory.Consumable;
@@ -73,7 +71,6 @@ public class InventoryUI : MonoBehaviour
         if (inventoryManager == null)
             return;
 
-        // If selected slot became empty or out of range, clear selection
         var slots = inventoryManager.GetSlots(currentCategory);
         if (selectedSlotIndex >= 0)
         {
@@ -84,7 +81,6 @@ public class InventoryUI : MonoBehaviour
             }
         }
 
-        // Rebuild compact list of only non-empty slots
         RebuildSlotsFromInventory();
 
         UpdateSelectionHighlight();
@@ -103,7 +99,6 @@ public class InventoryUI : MonoBehaviour
         if (inventoryManager == null || slotsParent == null || slotPrefab == null)
             return;
 
-        // Clear existing UI
         for (int i = slotsParent.childCount - 1; i >= 0; i--)
         {
             Destroy(slotsParent.GetChild(i).gameObject);
@@ -116,13 +111,12 @@ public class InventoryUI : MonoBehaviour
         {
             var slot = (InventorySlot)slots[i];
             if (slot == null || slot.IsEmpty || slot.item == null)
-                continue; // only create UI for filled slots
+                continue;
 
             var slotGO = Instantiate(slotPrefab, slotsParent);
             var slotUI = slotGO.GetComponent<InventorySlotUI>();
             if (slotUI != null)
             {
-                // Pass the *logical* index into InventoryManager.Slots
                 slotUI.Initialize(this, i);
                 slotUI.SetData(slot);
 
@@ -166,8 +160,6 @@ public class InventoryUI : MonoBehaviour
             ui.SetSelected(ui.SlotIndex == selectedSlotIndex);
         }
     }
-
-    #region Drag & Drop
 
     public void BeginDrag(int logicalIndex, PointerEventData eventData)
     {
@@ -227,7 +219,6 @@ public class InventoryUI : MonoBehaviour
             return;
         }
 
-        // Drag & drop is only between visible entries in the current category.
         inventoryManager.MoveSlot(currentCategory, draggingFromIndex, targetLogicalIndex);
         EndDrag(eventData);
     }
@@ -246,9 +237,6 @@ public class InventoryUI : MonoBehaviour
         dragIcon.rectTransform.localPosition = localPoint;
     }
 
-    #endregion
-
-    // Tab switching – hook these to UI buttons in the inspector
     public void ShowConsumablesTab()
     {
         currentCategory = InventoryCategory.Consumable;

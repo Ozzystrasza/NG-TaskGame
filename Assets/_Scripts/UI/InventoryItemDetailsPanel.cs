@@ -149,7 +149,6 @@ public class InventoryItemDetailsPanel : MonoBehaviour
             return;
         }
 
-        // Refresh details after inventory change
         var slots = InventoryManager.Instance.GetSlots(currentCategory);
         if (currentSlotIndex >= 0 && currentSlotIndex < slots.Count)
         {

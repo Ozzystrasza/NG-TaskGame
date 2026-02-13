@@ -4,63 +4,39 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-/// <summary>
-/// Central manager for handling NPC dialogue lookup, random selection and rewards.
-/// </summary>
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager Instance { get; private set; }
 
     [Header("Data")]
-    [Tooltip("All dialogue definitions available in the game.")]
     public List<DialogueDefinition> dialogueDefinitions = new List<DialogueDefinition>();
 
     [Header("UI")]
-    [Tooltip("Reference to the dialogue UI controller in the scene.")]
     public DialogueUIController dialogueUI;
 
     [Header("Input")]
-    [Tooltip("Input action used to advance / close dialogue (usually the same as interact).")]
     public InputActionReference continueAction;
 
-    /// <summary>
-    /// Tracks which one-time reward lines have already been consumed.
-    /// Key: dialogueId, Value: set of line indices.
-    /// </summary>
     private readonly Dictionary<string, HashSet<int>> _consumedRewardLines =
         new Dictionary<string, HashSet<int>>();
 
-    /// <summary>
-    /// Tracks which line indices have been shown at least once per dialogue id.
-    /// Used for gating reward lines and improving randomness.
-    /// </summary>
     private readonly Dictionary<string, HashSet<int>> _shownLines =
         new Dictionary<string, HashSet<int>>();
 
-    /// <summary>
-    /// Last chosen line index per dialogue id, to avoid immediate repeats.
-    /// </summary>
     private readonly Dictionary<string, int> _lastChosenIndex =
         new Dictionary<string, int>();
 
     private bool _dialogueOpen;
     private Action _onDialogueFinished;
 
-    // Pending reward info, granted after dialogue closes
     private ItemDefinition _pendingRewardItem;
     private string _pendingRewardDialogueId;
     private int _pendingRewardLineIndex = -1;
 
     public bool IsDialogueOpen => _dialogueOpen;
 
-    /// <summary>
-    /// When true, InteractionManager should ignore the next interact (so the keypress that closed dialogue doesn't reopen it).
-    /// </summary>
     public static bool IgnoreNextInteract { get; private set; }
 
-    /// <summary>
-    /// If IgnoreNextInteract is true, clears it and returns true; otherwise returns false.
-    /// </summary>
     public static bool ConsumeIgnoreNextInteract()
     {
         if (!IgnoreNextInteract) return false;
@@ -79,9 +55,6 @@ public class DialogueManager : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// Entry point used by NPCDialogue to start a dialogue by id.
-    /// </summary>
     public void StartDialogue(string dialogueId)
     {
         Debug.Log($"[DialogueManager] StartDialogue called for '{dialogueId}', open={_dialogueOpen}");
@@ -94,7 +67,6 @@ public class DialogueManager : MonoBehaviour
 
         if (_dialogueOpen)
         {
-            // Already showing a dialogue; ignore for now to avoid overlap.
             return;
         }
 
@@ -126,12 +98,9 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        // Track that this line has been shown at least once.
         GetShownSet(dialogueId).Add(chosenIndex);
         _lastChosenIndex[dialogueId] = chosenIndex;
 
-        // If this is a one-time reward line and not yet consumed, defer the reward
-        // until after the dialogue closes.
         if (line.isOneTimeReward && line.rewardItem != null && !IsRewardConsumed(dialogueId, chosenIndex))
         {
             _pendingRewardItem = line.rewardItem;
@@ -185,10 +154,8 @@ public class DialogueManager : MonoBehaviour
 
         var candidates = new List<int>();
 
-        // Normal lines are always eligible.
         candidates.AddRange(normalIndices);
 
-        // Gift gating: only allow reward lines once all normal lines have been shown at least once.
         if (rewardIndices.Count > 0 && AllNormalShown(normalIndices, shown))
         {
             candidates.AddRange(rewardIndices);
@@ -202,7 +169,6 @@ public class DialogueManager : MonoBehaviour
             return -1;
         }
 
-        // Prefer unseen candidates, fall back to seen, avoid immediate repeat when possible.
         var unseen = new List<int>();
         var seen = new List<int>();
 
@@ -224,7 +190,6 @@ public class DialogueManager : MonoBehaviour
         int lastIndex;
         bool hasLast = _lastChosenIndex.TryGetValue(id, out lastIndex);
 
-        // Build a filtered pool that avoids the last index when possible.
         var filtered = new List<int>();
         foreach (var idx in pool)
         {
@@ -294,7 +259,6 @@ public class DialogueManager : MonoBehaviour
             InventoryManager.Instance.Add(reward);
         }
 
-        // Reuse existing collected item UI if available.
         InteractionManager.Instance?.ShowCollected(reward);
     }
 
@@ -323,9 +287,6 @@ public class DialogueManager : MonoBehaviour
         InteractionManager.Instance?.HideInteractionPrompt();
     }
 
-    /// <summary>
-    /// Called by InteractionManager when the player presses interact while dialogue is open.
-    /// </summary>
     public void RequestCloseDialogue()
     {
         CloseDialogue();
@@ -346,7 +307,6 @@ public class DialogueManager : MonoBehaviour
 
         bool gaveReward = false;
 
-        // Grant any pending reward now that the dialogue is closed.
         if (_pendingRewardItem != null && !string.IsNullOrEmpty(_pendingRewardDialogueId) && _pendingRewardLineIndex >= 0)
         {
             if (!IsRewardConsumed(_pendingRewardDialogueId, _pendingRewardLineIndex))

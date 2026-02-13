@@ -5,9 +5,6 @@ public class InteractionManager : MonoBehaviour
 {
     public static InteractionManager Instance { get; private set; }
 
-    /// <summary>
-    /// True when we received an interact this event but returned early because UI was blocked (so DialogueManager should not set IgnoreNextInteract).
-    /// </summary>
     public static bool ReceivedInteractWhileBlocked { get; private set; }
 
     [Header("Input")]
@@ -179,18 +176,12 @@ public class InteractionManager : MonoBehaviour
             uiInstance.Hide();
     }
 
-    /// <summary>
-    /// Hides the "Press E to interact" prompt. Used when dialogue opens.
-    /// </summary>
     public void HideInteractionPrompt()
     {
         if (uiInstance != null)
             uiInstance.Hide();
     }
 
-    /// <summary>
-    /// Shows the interaction prompt if the player has an interactable focused. Used when dialogue closes.
-    /// </summary>
     public void ShowInteractionPromptIfFocused()
     {
         if (currentFocused != null)

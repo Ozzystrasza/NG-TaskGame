@@ -3,7 +3,6 @@ using UnityEngine;
 public class NPCDialogue : InteractiveElement
 {
     [Header("Dialogue")]
-    [Tooltip("Assign the DialogueDefinition asset for this NPC. Its id is used to start dialogue.")]
     public DialogueDefinition dialogueDefinition;
 
     public override void OnInteract()

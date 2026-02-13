@@ -47,7 +47,6 @@ public class WobbleAnimation : MonoBehaviour
         currentSeq.SetLink(gameObject);
     }
 
-    /// Call this when the object is collected/opened/disabled
     public void StopForever()
     {
         stoppedForever = true;
@@ -55,7 +54,6 @@ public class WobbleAnimation : MonoBehaviour
         transform.DORotate(baseRotation, 0.15f);
     }
 
-    /// Optional: restart if needed
     public void Restart()
     {
         stoppedForever = false;

@@ -33,22 +33,13 @@ public abstract class InteractiveElement : MonoBehaviour, IInteractable
         InteractionManager.Instance?.ClearFocus(this);
     }
 
-    /// <summary>
-    /// Called when the player focuses this interactable
-    /// </summary>
     public virtual void OnFocus()
     {
     }
 
-    /// <summary>
-    /// Called when the player stops focusing this interactable
-    /// </summary>
     public virtual void OnDefocus()
     {
     }
 
-    /// <summary>
-    /// Perform the interaction action
-    /// </summary>
     public abstract void OnInteract();
 }

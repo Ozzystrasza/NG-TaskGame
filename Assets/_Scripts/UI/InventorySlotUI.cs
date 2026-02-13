@@ -10,7 +10,6 @@ public class InventorySlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragHa
     [SerializeField] private GameObject selectionHighlight;
     [SerializeField] private TextMeshProUGUI equippedLabel;
 
-    // Logical index into InventoryManager.Slots
     private int slotIndex;
     private InventoryUI inventoryUI;
 

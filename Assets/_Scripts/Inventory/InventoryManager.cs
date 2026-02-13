@@ -203,7 +203,6 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    // Backwards-compat: defaults to Consumable category
     public void ClearSlot(int index) => ClearSlot(InventoryCategory.Consumable, index);
 
     public void MoveSlot(InventoryCategory category, int fromIndex, int toIndex)
@@ -217,7 +216,6 @@ public class InventoryManager : MonoBehaviour
 
         if (from.IsEmpty) return;
 
-        // If target empty, move
         if (to.IsEmpty)
         {
             to.item = from.item;
@@ -225,7 +223,6 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            // Swap
             var tempItem = to.item;
 
             to.item = from.item;
@@ -310,7 +307,6 @@ public class InventoryManager : MonoBehaviour
         return used;
     }
 
-    // Backwards-compat: defaults to Consumable category
     public bool UseItem(int slotIndex) => UseItem(InventoryCategory.Consumable, slotIndex);
 
     public IReadOnlyList<InventorySlot> GetSlots(InventoryCategory category)
@@ -358,8 +354,6 @@ public class InventoryManager : MonoBehaviour
     {
         return list != null && index >= 0 && index < list.Count;
     }
-
-    // --- Save / Load ---
 
     public InventorySaveData BuildSaveData(EquipmentManager equipmentManager)
     {

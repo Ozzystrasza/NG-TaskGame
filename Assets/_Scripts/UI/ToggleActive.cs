@@ -21,10 +21,6 @@ public class ToggleActive : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Toggle the active state of all assigned targets.
-    /// Hook this up to a UI Button's OnClick event.
-    /// </summary>
     public void Toggle()
     {
         if (targets == null) return;
